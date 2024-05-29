@@ -1,6 +1,5 @@
+// Componentes React
 import React, { useState, useEffect } from "react";
-
-import "../dist/scss/pages/login.scss";
 
 // Componentes de terceiros
 import TextField from "@mui/material/TextField";
@@ -9,7 +8,14 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
+// Funções de terceiros
+import { useNavigate } from "react-router-dom";
+
+// Estilos UNITES
+import "../dist/scss/pages/login.scss";
+
 const Login = () => {
+  const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [valueRegisterUser, setValueRegisterUser] = useState({
     name: "",
@@ -22,6 +28,10 @@ const Login = () => {
 
   const handleActiveRegisterForm = () => {
     setIsRegister(!isRegister);
+  };
+
+  const handleTogglePage = () => {
+    navigate("/home");
   };
 
   return (
@@ -144,7 +154,13 @@ const Login = () => {
             )}
           </div>
 
-          <button type="submit" className="btn-submit">
+          <button
+            type="submit"
+            className="btn-submit"
+            onClick={() => {
+              handleTogglePage();
+            }}
+          >
             {!isRegister ? "Entrar" : "Cadastrar"}
           </button>
         </div>
