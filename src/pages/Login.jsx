@@ -7,46 +7,175 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { Loader } from "semantic-ui-react";
+import ReactInputMask from "react-input-mask";
+
+// Componentes UNITES
+import Toast from "../components/toast";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
 
+// Imagens UNITES
+import Logo from "../assets/logo.svg";
+
 // Estilos UNITES
 import "../dist/scss/pages/login.scss";
+
+// API UNITES
+import {
+  createUser,
+  getGrauAcademico,
+  getInstituicao,
+  getLogin,
+} from "../services/endpoits";
+
+// Contexto UNITES
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
+  const [dataInstituicao, setDataInstituicao] = useState([]);
+  const [dataGrauAcademico, setDataGrauAcademico] = useState([]);
   const [valueRegisterUser, setValueRegisterUser] = useState({
-    name: "",
-    cpf: "",
-    password: "",
-    perfil: "",
-    academic_degree: "",
-    entity: "",
+    NOM_COMPLETO_USU: "",
+    COD_CPF_USU: "",
+    COD_SENHA_USU: "",
+    PESQUISADOR: "",
+    SEQ_GRA: "",
+    SEQ_INS: "",
   });
+  const { cpf, setCpf, password, setPassword, setIsAdmin } = useAuth();
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleActiveRegisterForm = () => {
     setIsRegister(!isRegister);
+    setValueRegisterUser({
+      NOM_COMPLETO_USU: "",
+      COD_CPF_USU: "",
+      COD_SENHA_USU: "",
+      PESQUISADOR: "",
+      SEQ_GRA: "",
+      SEQ_INS: "",
+    });
   };
 
   const handleTogglePage = () => {
     navigate("/home");
   };
 
+  const fetchInstituicaoData = async () => {
+    try {
+      const response = await getInstituicao();
+      if (response.Message) {
+        setDataInstituicao(response.Message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchGrauAcademico = async () => {
+    try {
+      const response = await getGrauAcademico();
+      if (response.Message) {
+        setDataGrauAcademico(response.Message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmitLogin = async (type) => {
+    console.log("type", type);
+    setIsLoading(true);
+
+    try {
+      if (type === "register") {
+        let userData = { ...valueRegisterUser };
+
+        if (!userData.PESQUISADOR) {
+          delete userData.SEQ_GRA;
+          delete userData.SEQ_INS;
+        }
+
+        const response = await createUser(userData);
+
+        if (response.Message === "All documents inserted!") {
+          Toast("success", "Cadastro realizado com sucesso!");
+
+          setTimeout(() => {
+            setIsLoading(false);
+            setIsRegister(false);
+          }, 1500);
+        }
+      } else if (type === "login") {
+        const response = await getLogin(cpf, password);
+        if (response.Message !== "No documents were found") {
+          localStorage.setItem("cpf", cpf);
+          localStorage.setItem("password", password);
+          localStorage.setItem("isAdmin", response.Message[0].flg_adm_usu);
+
+          Toast("success", "Login realizado com sucesso!");
+          setTimeout(() => {
+            setIsLoading(false);
+            navigate("/home");
+          }, 1500);
+        } else {
+          Toast("error", "Verifique as credenciais e tente novamente!");
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      Toast("error", "Erro inesperado, recarregue a página e tente novamente!");
+    }
+  };
+
+  useEffect(() => {
+    fetchInstituicaoData();
+    fetchGrauAcademico();
+  }, []);
+
   return (
     <>
       <div className="container-login">
         <div className={`content-form ${isRegister && "register"}`}>
           <div className="container-title">
-            <span className="title">Unites</span>
+            <img src={Logo} />
             <p className="description">Faça login para acessar a ferramenta</p>
           </div>
           <div className="container-inputs">
             {!isRegister ? (
               <>
-                <TextField label="Usuário" variant="standard" />
-                <TextField label="Senha" variant="standard" />
+                <ReactInputMask
+                  mask="999.999.999-99"
+                  value={cpf}
+                  onChange={(e) => {
+                    setCpf(e.target.value);
+                  }}
+                >
+                  {(inputProps) => (
+                    <TextField
+                      {...inputProps}
+                      label="CPF"
+                      type="text"
+                      variant="standard"
+                    />
+                  )}
+                </ReactInputMask>
+                <TextField
+                  label="Senha"
+                  type="password"
+                  variant="standard"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
                 <span
                   className="btn-newuser"
                   onClick={() => handleActiveRegisterForm()}
@@ -62,20 +191,29 @@ const Login = () => {
                   onChange={(e) =>
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      name: e.target.value,
+                      NOM_COMPLETO_USU: e.target.value,
                     })
                   }
                 />
-                <TextField
-                  label="CPF"
-                  variant="standard"
-                  onChange={(e) =>
+                <ReactInputMask
+                  mask="999.999.999-99"
+                  value={valueRegisterUser.COD_CPF_USU}
+                  onChange={(e) => {
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      cpf: e.target.value,
-                    })
-                  }
-                />
+                      COD_CPF_USU: e.target.value,
+                    });
+                  }}
+                >
+                  {(inputProps) => (
+                    <TextField
+                      {...inputProps}
+                      label="CPF"
+                      type="text"
+                      variant="standard"
+                    />
+                  )}
+                </ReactInputMask>
                 <TextField
                   label="Senha"
                   type="password"
@@ -83,31 +221,27 @@ const Login = () => {
                   onChange={(e) =>
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      password: e.target.value,
+                      COD_SENHA_USU: e.target.value,
                     })
                   }
-                />
-                <TextField
-                  label="Confirmação de senha"
-                  type="password"
-                  variant="standard"
                 />
                 <FormControl fullWidth variant="standard">
                   <InputLabel>Perfil</InputLabel>
                   <Select
                     label="Perfil"
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const isPesquisador = e.target.value === "Pesquisador";
                       setValueRegisterUser({
                         ...valueRegisterUser,
-                        perfil: e.target.value,
-                      })
-                    }
+                        PESQUISADOR: isPesquisador,
+                      });
+                    }}
                   >
                     <MenuItem value="Visitante">Visitante</MenuItem>
                     <MenuItem value="Pesquisador">Pesquisador</MenuItem>
                   </Select>
                 </FormControl>
-                {valueRegisterUser.perfil === "Pesquisador" && (
+                {valueRegisterUser.PESQUISADOR && (
                   <>
                     <FormControl fullWidth variant="standard">
                       <InputLabel>Grau acadêmico</InputLabel>
@@ -116,16 +250,15 @@ const Login = () => {
                         onChange={(e) =>
                           setValueRegisterUser({
                             ...valueRegisterUser,
-                            academic_degree: e.target.value,
+                            SEQ_GRA: e.target.value,
                           })
                         }
                       >
-                        <MenuItem value="Curso Técnico - CTeSP">
-                          Curso Técnico - CTeSP
-                        </MenuItem>
-                        <MenuItem value="Licenciatura">Licenciatura</MenuItem>
-                        <MenuItem value="Mestrado">Mestrado</MenuItem>
-                        <MenuItem value="Doutoramento">Doutoramento</MenuItem>
+                        {dataGrauAcademico.map((item) => (
+                          <MenuItem key={item.seq_gra} value={item.seq_gra}>
+                            {item.nom_gra}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                     <FormControl fullWidth variant="standard">
@@ -135,11 +268,15 @@ const Login = () => {
                         onChange={(e) =>
                           setValueRegisterUser({
                             ...valueRegisterUser,
-                            entity: e.target.value,
+                            SEQ_INS: e.target.value,
                           })
                         }
                       >
-                        <MenuItem value="Teste">Teste</MenuItem>
+                        {dataInstituicao.map((item) => (
+                          <MenuItem key={item.seq_ins} value={item.seq_ins}>
+                            {item.nom_ins}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </>
@@ -158,10 +295,14 @@ const Login = () => {
             type="submit"
             className="btn-submit"
             onClick={() => {
-              handleTogglePage();
+              handleSubmitLogin(!isRegister ? "login" : "register");
             }}
           >
-            {!isRegister ? "Entrar" : "Cadastrar"}
+            {isLoading ? (
+              <Loader size={"tiny"} active inline="centered" />
+            ) : (
+              <>{!isRegister ? "Entrar" : "Cadastrar"}</>
+            )}
           </button>
         </div>
       </div>

@@ -1,0 +1,97 @@
+@import "../variables.scss";
+
+.container-actions {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid rgba(119, 128, 128, 0.08);
+  padding: 16px;
+  > .title {
+    font-size: 1rem;
+    color: #343434;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+  > .content-actions {
+    align-items: center;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    > button {
+      background-color: $main-blue !important;
+      font-size: 0.75rem;
+      height: 40px !important;
+    }
+  }
+}
+
+.container-table {
+  padding: 16px;
+}
+
+.MuiBox-root {
+  font-family: "Roboto", sans-serif !important;
+  gap: 10px;
+  .MuiTextField-root {
+    width: 100% !important;
+    .MuiFormLabel-root {
+      font-size: 0.857rem !important;
+      color: #343434 !important;
+    }
+    .MuiInputBase-root {
+      input {
+        font-size: 0.857rem !important;
+        color: #343434 !important;
+      }
+    }
+  }
+  > .container {
+    display: flex;
+    width: 100%;
+    gap: 15px;
+    align-items: center;
+    .MuiFormControl-root {
+      width: 50%;
+      > label {
+        font-size: 0.857rem !important;
+        color: #343434 !important;
+      }
+    }
+    .MuiStack-root {
+      width: 50%;
+      padding-top: 0 !important;
+    }
+  }
+  textarea {
+    font-size: 0.857rem !important;
+    color: #343434 !important;
+    &::placeholder {
+      color: #343434 !important;
+      opacity: 1;
+    }
+  }
+  .MuiFormControl-root {
+    > label {
+      font-size: 0.857rem !important;
+      color: #343434 !important;
+    }
+  }
+  > .actions {
+    display: flex;
+    justify-content: end;
+    width: 100%;
+    gap: 10px;
+    height: 40px;
+    > .MuiButton-contained {
+      background-color: $main-blue !important;
+      border-color: $main-blue;
+      font-size: 0.75rem;
+      height: 100% !important;
+    }
+    > .MuiButton-outlined {
+      border-color: $main-blue;
+      font-size: 0.75rem;
+      height: 100% !important;
+      color: $main-blue;
+    }
+  }
+}
