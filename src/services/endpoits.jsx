@@ -48,6 +48,18 @@ export const getLogin = async (cpf, passwd) => {
   }
 };
 
+export const getAreaAcademica = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/areaAcademica`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const createUser = async (userData) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/usuario`, {
@@ -89,10 +101,50 @@ export const createInstituicao = async (body) => {
   }
 };
 
+export const createAreaAcademica = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/areaAcademica`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const updateInstituicao = async (body) => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BASE_PATH}/instituicao`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateAreaAcademica = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/areaAcademica`,
       {
         method: "PATCH",
         headers: {
@@ -121,9 +173,24 @@ export const deleteInstituicao = async (id) => {
       }
     );
 
-    if (!response.ok) {
-      throw new Error("Failed to delete data");
-    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch data");
+  }
+};
+
+export const deleteAreaAcademica = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/areaAcademica/SEQ_ARE/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
     return data;
