@@ -1,17 +1,30 @@
-import ThunderstormIcon from "@mui/icons-material/Thunderstorm";
+// Icones MUI
 import SettingsIcon from "@mui/icons-material/Settings";
 
-// Componentes de terceiros
-import { Icon } from "@mui/material";
+// Imagens UNITES
+import Logo from "../assets/logo.svg";
+
+// Fuções de terceiros
+import { useNavigate } from "react-router-dom";
 
 // Estilos UNITES
 import "../dist/scss/components/topbar.scss";
 
 const Topbar = () => {
+  const navigate = useNavigate();
+
+  const handleTogglePage = () => {
+    navigate("/home");
+  };
+
   return (
     <div className="container-topbar">
       <div className="content-title">
-        <span className="title">Unites</span> <ThunderstormIcon color="green" />
+        <img
+          src={Logo}
+          onClick={handleTogglePage}
+          style={{ cursor: "pointer" }}
+        />
       </div>
       <SettingsIcon />
     </div>
