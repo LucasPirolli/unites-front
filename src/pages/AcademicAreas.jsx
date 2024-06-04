@@ -5,11 +5,7 @@ import React, { useState, useEffect } from "react";
 import Topbar from "../components/Topbar";
 
 // Componentes de terceiros
-import {
-  Button,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Button, Modal, TextField } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -18,33 +14,31 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
 import { Dimmer, Loader } from "semantic-ui-react";
-import ReactInputMask from "react-input-mask";
+
+// Componentes UNITES
+import Toast from "../components/toast";
 
 // API UNITES
 import {
-  createInstituicao,
-  deleteInstituicao,
-  getInstituicao,
-  updateInstituicao,
+  createAreaAcademica,
+  deleteAreaAcademica,
+  getAreaAcademica,
+  updateAreaAcademica,
 } from "../services/endpoits";
 
 // Estilos UNITES
-import "../dist/scss/pages/institutions.scss";
 import { style } from "../utils/utils";
 
 // Icones MUI
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Toast from "../components/toast";
 
-const Institutions = () => {
+const AcademicAreas = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [dataInstituicoes, setDataInstituicoes] = useState([]);
+  const [dataAreasAcademicas, setDataAreasAcademicas] = useState([]);
   const [selectedItemModal, setSelectedItemModal] = useState({
-    cod_cnpj_ins: "",
-    nom_ins: "",
-    nom_sigla_ins: "",
+    nom_are: "",
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,9 +52,7 @@ const Institutions = () => {
     setIsEditing(false);
     setIsLoading(false);
     setSelectedItemModal({
-      cod_cnpj_ins: "",
-      nom_ins: "",
-      nom_sigla_ins: "",
+      nom_are: "",
     });
   };
 
@@ -70,49 +62,32 @@ const Institutions = () => {
     setModalIsOpen(true);
   };
 
-  const handleSubmitInstitutions = async () => {
+  const handleSubmitAreaAcademica = async () => {
     setIsLoading(true);
     try {
       if (isEditing) {
-        const response = await updateInstituicao(selectedItemModal);
-        console.log('response', response);
+        const response = await updateAreaAcademica(selectedItemModal);
+
         if (response.Message === "All documents updated!") {
           Toast("success", "Item atualizado com sucesso!");
           setTimeout(() => {
             setIsLoading(false);
             handleCloseModal();
-            fetchInstituicoes();
+            fetchAreaAcademica();
           }, 1500);
-        } else if (
-          response.Message === "Institution with informed CNPJ allready exists!"
-        ) {
-          Toast(
-            "info",
-            "Você está tentando criar uma instituição que já existe!"
-          );
-          setIsLoading(false);
         } else {
           Toast("error", "Erro ao atualizar item!");
           setIsLoading(false);
         }
       } else {
-        const response = await createInstituicao(selectedItemModal);
-        console.log("response", response);
+        const response = await createAreaAcademica(selectedItemModal);
         if (response.Message === "All documents inserted!") {
           Toast("success", "Item inserido com sucesso!");
           setTimeout(() => {
             setIsLoading(false);
             handleCloseModal();
-            fetchInstituicoes();
+            fetchAreaAcademica();
           }, 1500);
-        } else if (
-          response.Message === "Institution with informed CNPJ allready exists!"
-        ) {
-          Toast(
-            "info",
-            "Você está tentando cadastrar uma instituição que já existe!"
-          );
-          setIsLoading(false);
         } else {
           Toast("error", "Erro ao criar item!");
           setIsLoading(false);
@@ -124,15 +99,13 @@ const Institutions = () => {
     }
   };
 
-  const handleDeleteInstitutions = async (id) => {
+  const handleDeleteAreaAcademica = async (id) => {
     try {
-      const response = await deleteInstituicao(id);
-
-      console.log(response);
+      const response = await deleteAreaAcademica(id);
 
       if (response.Message === "All documents deleted!") {
         Toast("success", "Item excluído com sucesso!");
-        fetchInstituicoes();
+        fetchAreaAcademica();
         handleCloseModal();
       } else {
         Toast("error", "Erro ao excluir item, tente novamente!");
@@ -142,12 +115,12 @@ const Institutions = () => {
     }
   };
 
-  const fetchInstituicoes = async () => {
+  const fetchAreaAcademica = async () => {
     try {
-      const response = await getInstituicao();
+      const response = await getAreaAcademica();
 
       if (response.Message) {
-        setDataInstituicoes(response.Message);
+        setDataAreasAcademicas(response.Message);
       }
     } catch (error) {
       console.log(error);
@@ -155,18 +128,18 @@ const Institutions = () => {
   };
 
   useEffect(() => {
-    console.log("dataInstituicoes", dataInstituicoes);
-  }, [dataInstituicoes]);
+    console.log("selectedItemModal", selectedItemModal);
+  }, [selectedItemModal]);
 
   useEffect(() => {
-    fetchInstituicoes();
+    fetchAreaAcademica();
   }, []);
 
   return (
     <>
       <Topbar />
       <div className="container-actions">
-        <span className="title">Instuições</span>
+        <span className="title">Áreas acadêmicas</span>
         <div className="content-actions">
           <Button
             variant="contained"
@@ -178,7 +151,7 @@ const Institutions = () => {
         </div>
       </div>
       <div className="container-table">
-        {dataInstituicoes.length > 0 ? (
+        {dataAreasAcademicas.length > 0 ? (
           <>
             <TableContainer
               sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
@@ -193,14 +166,12 @@ const Institutions = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Nome</TableCell>
-                    <TableCell>Sigla</TableCell>
-                    <TableCell>CNPJ</TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataInstituicoes?.length > 0 &&
-                    dataInstituicoes.map((row, index) => (
+                  {dataAreasAcademicas?.length > 0 &&
+                    dataAreasAcademicas.map((row, index) => (
                       <TableRow
                         key={index}
                         sx={{
@@ -210,13 +181,7 @@ const Institutions = () => {
                         }}
                       >
                         <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.nom_ins}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.nom_sigla_ins}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.cod_cnpj_ins}
+                          {row.nom_are}
                         </TableCell>
                         <TableCell sx={{ fontSize: ".75rem" }}>
                           <EditIcon
@@ -234,7 +199,7 @@ const Institutions = () => {
                               cursor: "pointer",
                             }}
                             onClick={() =>
-                              handleDeleteInstitutions(row.seq_ins)
+                              handleDeleteAreaAcademica(row.seq_are)
                             }
                           />
                         </TableCell>
@@ -258,62 +223,26 @@ const Institutions = () => {
             className="title"
             style={{ color: "#343434", fontSize: "1rem", fontWeight: 500 }}
           >
-            {isEditing ? "Edite a" : "Cadastro de"} produção acadêmica
+            {isEditing ? "Edite a" : "Cadastro de"} área acadêmica
           </span>
 
           <TextField
             label="Nome"
             type="text"
             variant="outlined"
-            defaultValue={selectedItemModal && selectedItemModal.nom_ins}
+            defaultValue={selectedItemModal && selectedItemModal.nom_are}
             onChange={(e) => {
               setSelectedItemModal({
                 ...selectedItemModal,
-                nom_ins: e.target.value,
+                nom_are: e.target.value,
               });
             }}
           />
 
-          <div className="container">
-            <TextField
-              label="Sigla"
-              type="text"
-              variant="outlined"
-              defaultValue={
-                selectedItemModal && selectedItemModal.nom_sigla_ins
-              }
-              onChange={(e) => {
-                setSelectedItemModal({
-                  ...selectedItemModal,
-                  nom_sigla_ins: e.target.value,
-                });
-              }}
-            />
-            <ReactInputMask
-              mask="99.999.999/9999-99"
-              value={selectedItemModal && selectedItemModal.cod_cnpj_ins}
-              onChange={(e) => {
-                setSelectedItemModal({
-                  ...selectedItemModal,
-                  cod_cnpj_ins: e.target.value,
-                });
-              }}
-            >
-              {(inputProps) => (
-                <TextField
-                  {...inputProps}
-                  label="CNPJ"
-                  type="text"
-                  variant="outlined"
-                />
-              )}
-            </ReactInputMask>
-          </div>
-
           <div className="actions">
             <Button
               variant="contained"
-              onClick={() => handleSubmitInstitutions()}
+              onClick={() => handleSubmitAreaAcademica()}
             >
               {isLoading ? (
                 <Loader size={"tiny"} active inline="centered" />
@@ -331,4 +260,4 @@ const Institutions = () => {
   );
 };
 
-export default Institutions;
+export default AcademicAreas;

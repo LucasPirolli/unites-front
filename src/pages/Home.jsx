@@ -64,7 +64,7 @@ const Home = () => {
     } else if (page === "Instituições") {
       navigate("/institutions");
     } else {
-      navigate("/academic_productions");
+      navigate("/academic_areas");
     }
   };
 
