@@ -68,3 +68,66 @@ export const createUser = async (userData) => {
     throw new Error(error.message);
   }
 };
+
+export const createInstituicao = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/instituicao`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateInstituicao = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/instituicao`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const deleteInstituicao = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/instituicao/SEQ_INS/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to delete data");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch data");
+  }
+};

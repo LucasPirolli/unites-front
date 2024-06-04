@@ -22,13 +22,19 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { Dimmer, Loader } from "semantic-ui-react";
+import ReactInputMask from "react-input-mask";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
+
+// API UNITES
+import {
+  createInstituicao,
+  deleteInstituicao,
+  getInstituicao,
+  updateInstituicao,
+} from "../services/endpoits";
 
 // Estilos UNITES
 import "../dist/scss/pages/institutions.scss";
@@ -38,40 +44,19 @@ import { style } from "../utils/utils";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import Toast from "../components/toast";
 
 const Institutions = () => {
   const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-
-  const dados = [
-    {
-      título: "Estudo sobre mudanças climáticas",
-      áreaAcadêmica: "Ciências Ambientais",
-      descrição:
-        "Pesquisa sobre os efeitos das mudanças climáticas na biodiversidade",
-      período: "2020-2023",
-      pesquisadores: ["João Silva", "Maria Santos"],
-      tipoProdução: "Artigo Científico",
-    },
-    {
-      título: "Desenvolvimento de algoritmo de inteligência artificial",
-      áreaAcadêmica: "Ciência da Computação",
-      descrição:
-        "Projeto para criar um algoritmo de aprendizado de máquina para reconhecimento de padrões",
-      período: "2021-2024",
-      pesquisadores: ["Pedro Almeida", "Ana Oliveira", "Carlos Souza"],
-      tipoProdução: "Software",
-    },
-    {
-      título: "Estudo sobre economia comportamental",
-      áreaAcadêmica: "Economia",
-      descrição:
-        "Pesquisa sobre como os comportamentos individuais afetam as decisões econômicas",
-      período: "2019-2022",
-      pesquisadores: ["Fernanda Costa", "Ricardo Santos"],
-      tipoProdução: "Tese",
-    },
-  ];
+  const [dataInstituicoes, setDataInstituicoes] = useState([]);
+  const [selectedItemModal, setSelectedItemModal] = useState({
+    cod_cnpj_ins: "",
+    nom_ins: "",
+    nom_sigla_ins: "",
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleOpenModal = () => {
     setModalIsOpen(true);
@@ -79,7 +64,112 @@ const Institutions = () => {
 
   const handleCloseModal = () => {
     setModalIsOpen(false);
+    setIsEditing(false);
+    setIsLoading(false);
+    setSelectedItemModal({
+      cod_cnpj_ins: "",
+      nom_ins: "",
+      nom_sigla_ins: "",
+    });
   };
+
+  const handleEditClick = (item) => {
+    setSelectedItemModal(item);
+    setIsEditing(true);
+    setModalIsOpen(true);
+  };
+
+  const handleSubmitInstitutions = async () => {
+    setIsLoading(true);
+    try {
+      if (isEditing) {
+        const response = await updateInstituicao(selectedItemModal);
+        console.log('response', response);
+        if (response.Message === "All documents updated!") {
+          Toast("success", "Item atualizado com sucesso!");
+          setTimeout(() => {
+            setIsLoading(false);
+            handleCloseModal();
+            fetchInstituicoes();
+          }, 1500);
+        } else if (
+          response.Message === "Institution with informed CNPJ allready exists!"
+        ) {
+          Toast(
+            "info",
+            "Você está tentando criar uma instituição que já existe!"
+          );
+          setIsLoading(false);
+        } else {
+          Toast("error", "Erro ao atualizar item!");
+          setIsLoading(false);
+        }
+      } else {
+        const response = await createInstituicao(selectedItemModal);
+        console.log("response", response);
+        if (response.Message === "All documents inserted!") {
+          Toast("success", "Item inserido com sucesso!");
+          setTimeout(() => {
+            setIsLoading(false);
+            handleCloseModal();
+            fetchInstituicoes();
+          }, 1500);
+        } else if (
+          response.Message === "Institution with informed CNPJ allready exists!"
+        ) {
+          Toast(
+            "info",
+            "Você está tentando cadastrar uma instituição que já existe!"
+          );
+          setIsLoading(false);
+        } else {
+          Toast("error", "Erro ao criar item!");
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      Toast("error", "Erro inesperado!");
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteInstitutions = async (id) => {
+    try {
+      const response = await deleteInstituicao(id);
+
+      console.log(response);
+
+      if (response.Message === "All documents deleted!") {
+        Toast("success", "Item excluído com sucesso!");
+        fetchInstituicoes();
+        handleCloseModal();
+      } else {
+        Toast("error", "Erro ao excluir item, tente novamente!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchInstituicoes = async () => {
+    try {
+      const response = await getInstituicao();
+
+      if (response.Message) {
+        setDataInstituicoes(response.Message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("dataInstituicoes", dataInstituicoes);
+  }, [dataInstituicoes]);
+
+  useEffect(() => {
+    fetchInstituicoes();
+  }, []);
 
   return (
     <>
@@ -97,74 +187,79 @@ const Institutions = () => {
         </div>
       </div>
       <div className="container-table">
-        <TableContainer sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
-          <Table
-            sx={{
-              minWidth: 650,
-              fontSize: "0.75rem",
-            }}
-            aria-label="simple table"
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>Título</TableCell>
-                <TableCell>Área acadêmica</TableCell>
-                <TableCell>Descrição</TableCell>
-                <TableCell>Período</TableCell>
-                <TableCell>Pesquisadores</TableCell>
-                <TableCell>Tipo de produção</TableCell>
-                <TableCell>Ações</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {dados.map((row, index) => (
-                <TableRow
-                  key={index}
-                  sx={{
-                    "&:last-child td, &:last-child th": {
-                      border: 0,
-                    },
-                  }}
-                >
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    {row.título}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    {row.áreaAcadêmica}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    {row.descrição}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    {row.período}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    {row.pesquisadores.join(", ")}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    {row.tipoProdução}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
-                    <EditIcon
-                      sx={{
-                        width: "0.75em",
-                        height: "0.75em",
-                        cursor: "pointer",
-                      }}
-                    />
-                    <DeleteIcon
-                      sx={{
-                        width: "0.75em",
-                        height: "0.75em",
-                        cursor: "pointer",
-                      }}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {dataInstituicoes.length > 0 ? (
+          <>
+            <TableContainer
+              sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
+            >
+              <Table
+                sx={{
+                  minWidth: 650,
+                  fontSize: "0.75rem",
+                }}
+                aria-label="simple table"
+              >
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Nome</TableCell>
+                    <TableCell>Sigla</TableCell>
+                    <TableCell>CNPJ</TableCell>
+                    <TableCell>Ações</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {dataInstituicoes?.length > 0 &&
+                    dataInstituicoes.map((row, index) => (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          "&:last-child td, &:last-child th": {
+                            border: 0,
+                          },
+                        }}
+                      >
+                        <TableCell sx={{ fontSize: ".75rem" }}>
+                          {row.nom_ins}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: ".75rem" }}>
+                          {row.nom_sigla_ins}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: ".75rem" }}>
+                          {row.cod_cnpj_ins}
+                        </TableCell>
+                        <TableCell sx={{ fontSize: ".75rem" }}>
+                          <EditIcon
+                            sx={{
+                              width: "0.75em",
+                              height: "0.75em",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleEditClick(row)}
+                          />
+                          <DeleteIcon
+                            sx={{
+                              width: "0.75em",
+                              height: "0.75em",
+                              cursor: "pointer",
+                            }}
+                            onClick={() =>
+                              handleDeleteInstitutions(row.seq_ins)
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </>
+        ) : (
+          <>
+            <Dimmer active inverted>
+              <Loader size="small" />
+            </Dimmer>
+          </>
+        )}
       </div>
       <Modal open={modalIsOpen} onClose={handleCloseModal}>
         <Box sx={style}>
@@ -172,42 +267,72 @@ const Institutions = () => {
             className="title"
             style={{ color: "#343434", fontSize: "1rem", fontWeight: 500 }}
           >
-            Cadastro de produções acadêmicas
+            {isEditing ? "Edite a" : "Cadastro de"} produção acadêmica
           </span>
 
-          <TextField label="Título" type="text" variant="outlined" />
+          <TextField
+            label="Nome"
+            type="text"
+            variant="outlined"
+            defaultValue={selectedItemModal && selectedItemModal.nom_ins}
+            onChange={(e) => {
+              setSelectedItemModal({
+                ...selectedItemModal,
+                nom_ins: e.target.value,
+              });
+            }}
+          />
 
           <div className="container">
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Área acadêmica</InputLabel>
-              <Select label="Área acadêmica"></Select>
-            </FormControl>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["DatePicker"]}>
-                <DatePicker label="Período" />
-              </DemoContainer>
-            </LocalizationProvider>
-          </div>
-          <TextField placeholder="Descrição" multiline rows={2} maxRows={4} />
-          <FormControl fullWidth variant="outlined">
-            <InputLabel>Pesquisadores</InputLabel>
-            <Select label="Pesquisadores"></Select>
-          </FormControl>
-          <div className="container">
-            <FormControl fullWidth variant="outlined">
-              <InputLabel>Tipo de produção</InputLabel>
-              <Select label="Tipo de produção"></Select>
-            </FormControl>
-            <FormControlLabel
-              labelPlacement="top"
-              control={<Switch defaultChecked />}
-              label="Status"
+            <TextField
+              label="Sigla"
+              type="text"
+              variant="outlined"
+              defaultValue={
+                selectedItemModal && selectedItemModal.nom_sigla_ins
+              }
+              onChange={(e) => {
+                setSelectedItemModal({
+                  ...selectedItemModal,
+                  nom_sigla_ins: e.target.value,
+                });
+              }}
             />
+            <ReactInputMask
+              mask="99.999.999/9999-99"
+              value={selectedItemModal && selectedItemModal.cod_cnpj_ins}
+              onChange={(e) => {
+                setSelectedItemModal({
+                  ...selectedItemModal,
+                  cod_cnpj_ins: e.target.value,
+                });
+              }}
+            >
+              {(inputProps) => (
+                <TextField
+                  {...inputProps}
+                  label="CNPJ"
+                  type="text"
+                  variant="outlined"
+                />
+              )}
+            </ReactInputMask>
           </div>
 
           <div className="actions">
-            <Button variant="contained">Salvar</Button>
-            <Button variant="outlined" onClick={handleCloseModal}>Fechar</Button>
+            <Button
+              variant="contained"
+              onClick={() => handleSubmitInstitutions()}
+            >
+              {isLoading ? (
+                <Loader size={"tiny"} active inline="centered" />
+              ) : (
+                <>{isEditing ? "Editar" : "Salvar"}</>
+              )}
+            </Button>
+            <Button variant="outlined" onClick={handleCloseModal}>
+              Fechar
+            </Button>
           </div>
         </Box>
       </Modal>
