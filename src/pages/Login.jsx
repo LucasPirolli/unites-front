@@ -7,6 +7,11 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { Loader } from "semantic-ui-react";
+import ReactInputMask from "react-input-mask";
+
+// Componentes UNITES
+import Toast from "../components/toast";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
@@ -16,8 +21,17 @@ import Logo from "../assets/logo.svg";
 
 // Estilos UNITES
 import "../dist/scss/pages/login.scss";
-import { createUser, getGrauAcademico, getInstituicao } from "../services/endpoits";
-import ReactInputMask from "react-input-mask";
+
+// API UNITES
+import {
+  createUser,
+  getGrauAcademico,
+  getInstituicao,
+  getLogin,
+} from "../services/endpoits";
+
+// Contexto UNITES
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -32,11 +46,20 @@ const Login = () => {
     SEQ_GRA: "",
     SEQ_INS: "",
   });
+  const { cpf, setCpf, password, setPassword, setIsAdmin } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 
   const handleActiveRegisterForm = () => {
     setIsRegister(!isRegister);
+    setValueRegisterUser({
+      NOM_COMPLETO_USU: "",
+      COD_CPF_USU: "",
+      COD_SENHA_USU: "",
+      PESQUISADOR: "",
+      SEQ_GRA: "",
+      SEQ_INS: "",
+    });
   };
 
   const handleTogglePage = () => {
@@ -65,13 +88,50 @@ const Login = () => {
     }
   };
 
-  const handleSumitLogin = async () => {
+  const handleSubmitLogin = async (type) => {
+    console.log("type", type);
     setIsLoading(true);
+
     try {
-      const response = await createUser(valueRegisterUser);
-      console.log("User created successfully:", response);
+      if (type === "register") {
+        let userData = { ...valueRegisterUser };
+
+        if (!userData.PESQUISADOR) {
+          delete userData.SEQ_GRA;
+          delete userData.SEQ_INS;
+        }
+
+        const response = await createUser(userData);
+
+        if (response.Message === "All documents inserted!") {
+          Toast("success", "Cadastro realizado com sucesso!");
+
+          setTimeout(() => {
+            setIsLoading(false);
+            setIsRegister(false);
+          }, 1500);
+        }
+      } else if (type === "login") {
+        const response = await getLogin(cpf, password);
+        if (response.Message !== "No documents were found") {
+          localStorage.setItem("cpf", cpf);
+          localStorage.setItem("password", password);
+          localStorage.setItem("isAdmin", response.Message[0].flg_adm_usu);
+
+          Toast("success", "Login realizado com sucesso!");
+          setTimeout(() => {
+            setIsLoading(false);
+            navigate("/home");
+          }, 1500);
+        } else {
+          Toast("error", "Verifique as credenciais e tente novamente!");
+          setIsLoading(false);
+        }
+      }
     } catch (error) {
       console.error(error);
+      setIsLoading(false);
+      Toast("error", "Erro inesperado, recarregue a página e tente novamente!");
     }
   };
 
@@ -91,8 +151,31 @@ const Login = () => {
           <div className="container-inputs">
             {!isRegister ? (
               <>
-                <TextField label="Usuário" variant="standard" />
-                <TextField label="Senha" variant="standard" />
+                <ReactInputMask
+                  mask="999.999.999-99"
+                  value={cpf}
+                  onChange={(e) => {
+                    setCpf(e.target.value);
+                  }}
+                >
+                  {(inputProps) => (
+                    <TextField
+                      {...inputProps}
+                      label="CPF"
+                      type="text"
+                      variant="standard"
+                    />
+                  )}
+                </ReactInputMask>
+                <TextField
+                  label="Senha"
+                  type="password"
+                  variant="standard"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                />
                 <span
                   className="btn-newuser"
                   onClick={() => handleActiveRegisterForm()}
@@ -212,10 +295,14 @@ const Login = () => {
             type="submit"
             className="btn-submit"
             onClick={() => {
-              handleSumitLogin();
+              handleSubmitLogin(!isRegister ? "login" : "register");
             }}
           >
-            {!isRegister ? "Entrar" : "Cadastrar"}
+            {isLoading ? (
+              <Loader size={"tiny"} active inline="centered" />
+            ) : (
+              <>{!isRegister ? "Entrar" : "Cadastrar"}</>
+            )}
           </button>
         </div>
       </div>

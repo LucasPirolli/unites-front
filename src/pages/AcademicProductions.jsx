@@ -32,25 +32,12 @@ import { useNavigate } from "react-router-dom";
 
 // Estilos UNITES
 import "../dist/scss/pages/academicproductions.scss";
+import { style } from "../utils/utils";
 
 // Icones MUI
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 1000,
-  bgcolor: "#fff",
-  p: 2,
-  borderRadius: 1,
-  gap: "15px",
-  display: "flex",
-  flexDirection: "column",
-};
 
 const AcademicProductions = () => {
   const navigate = useNavigate();
@@ -195,17 +182,17 @@ const AcademicProductions = () => {
               <InputLabel>Área acadêmica</InputLabel>
               <Select label="Área acadêmica"></Select>
             </FormControl>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={["DatePicker"]}>
-                <DatePicker label="Período" />
-              </DemoContainer>
-            </LocalizationProvider>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel>Pesquisadores</InputLabel>
+              <Select label="Pesquisadores"></Select>
+            </FormControl>
           </div>
           <TextField placeholder="Descrição" multiline rows={2} maxRows={4} />
-          <FormControl fullWidth variant="outlined">
-            <InputLabel>Pesquisadores</InputLabel>
-            <Select label="Pesquisadores"></Select>
-          </FormControl>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={["DatePicker"]}>
+              <DatePicker label="Período" localeText={"ptBR"} />
+            </DemoContainer>
+          </LocalizationProvider>
           <div className="container">
             <FormControl fullWidth variant="outlined">
               <InputLabel>Tipo de produção</InputLabel>
@@ -220,7 +207,9 @@ const AcademicProductions = () => {
 
           <div className="actions">
             <Button variant="contained">Salvar</Button>
-            <Button variant="outlined" onClick={handleCloseModal}>Fechar</Button>
+            <Button variant="outlined" onClick={handleCloseModal}>
+              Fechar
+            </Button>
           </div>
         </Box>
       </Modal>
