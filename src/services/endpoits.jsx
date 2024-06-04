@@ -1,5 +1,3 @@
-console.log(import.meta.env.VITE_BASE_PATH);
-
 export const getInstituicao = async () => {
   try {
     const response = await fetch(
@@ -16,6 +14,18 @@ export const getGrauAcademico = async () => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BASE_PATH}/grauAcademico`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
+
+export const getPesquisadores = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/pesquisador`
     );
     const data = await response.json();
     return data;

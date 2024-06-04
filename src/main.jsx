@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import AcademicProductions from "./pages/AcademicProductions";
 import Institutions from "./pages/Institutions";
+import Researchers from "./pages/Researchers";
 
 // Contexto UNITES
 import { AuthProvider } from "./context/AuthContext";
@@ -32,6 +33,7 @@ const Main = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/academic_productions" element={<AcademicProductions />} />
         <Route path="/institutions" element={<Institutions />} />
+        <Route path="/researchers" element={<Researchers />} />
       </Routes>
     </Router>
   );

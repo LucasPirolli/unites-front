@@ -113,7 +113,7 @@ const AcademicProductions = () => {
                 <TableCell>Período</TableCell>
                 <TableCell>Pesquisadores</TableCell>
                 <TableCell>Tipo de produção</TableCell>
-                <TableCell>Ações</TableCell>
+                <TableCell sx={{ textAlign: "center" }}>Ações</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -144,7 +144,7 @@ const AcademicProductions = () => {
                   <TableCell sx={{ fontSize: ".75rem" }}>
                     {row.tipoProdução}
                   </TableCell>
-                  <TableCell sx={{ fontSize: ".75rem" }}>
+                  <TableCell sx={{ fontSize: ".75rem", textAlign: "center" }}>
                     <EditIcon
                       sx={{
                         width: "0.75em",

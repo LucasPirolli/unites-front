@@ -89,7 +89,6 @@ const Login = () => {
   };
 
   const handleSubmitLogin = async (type) => {
-    console.log("type", type);
     setIsLoading(true);
 
     try {
