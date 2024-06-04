@@ -11,20 +11,29 @@ import Select from "@mui/material/Select";
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
 
+// Imagens UNITES
+import Logo from "../assets/logo.svg";
+
 // Estilos UNITES
 import "../dist/scss/pages/login.scss";
+import { createUser, getGrauAcademico, getInstituicao } from "../services/endpoits";
+import ReactInputMask from "react-input-mask";
 
 const Login = () => {
   const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
+  const [dataInstituicao, setDataInstituicao] = useState([]);
+  const [dataGrauAcademico, setDataGrauAcademico] = useState([]);
   const [valueRegisterUser, setValueRegisterUser] = useState({
-    name: "",
-    cpf: "",
-    password: "",
-    perfil: "",
-    academic_degree: "",
-    entity: "",
+    NOM_COMPLETO_USU: "",
+    COD_CPF_USU: "",
+    COD_SENHA_USU: "",
+    PESQUISADOR: "",
+    SEQ_GRA: "",
+    SEQ_INS: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleActiveRegisterForm = () => {
     setIsRegister(!isRegister);
@@ -34,12 +43,49 @@ const Login = () => {
     navigate("/home");
   };
 
+  const fetchInstituicaoData = async () => {
+    try {
+      const response = await getInstituicao();
+      if (response.Message) {
+        setDataInstituicao(response.Message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchGrauAcademico = async () => {
+    try {
+      const response = await getGrauAcademico();
+      if (response.Message) {
+        setDataGrauAcademico(response.Message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSumitLogin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await createUser(valueRegisterUser);
+      console.log("User created successfully:", response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInstituicaoData();
+    fetchGrauAcademico();
+  }, []);
+
   return (
     <>
       <div className="container-login">
         <div className={`content-form ${isRegister && "register"}`}>
           <div className="container-title">
-            <span className="title">Unites</span>
+            <img src={Logo} />
             <p className="description">Faça login para acessar a ferramenta</p>
           </div>
           <div className="container-inputs">
@@ -62,20 +108,29 @@ const Login = () => {
                   onChange={(e) =>
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      name: e.target.value,
+                      NOM_COMPLETO_USU: e.target.value,
                     })
                   }
                 />
-                <TextField
-                  label="CPF"
-                  variant="standard"
-                  onChange={(e) =>
+                <ReactInputMask
+                  mask="999.999.999-99"
+                  value={valueRegisterUser.COD_CPF_USU}
+                  onChange={(e) => {
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      cpf: e.target.value,
-                    })
-                  }
-                />
+                      COD_CPF_USU: e.target.value,
+                    });
+                  }}
+                >
+                  {(inputProps) => (
+                    <TextField
+                      {...inputProps}
+                      label="CPF"
+                      type="text"
+                      variant="standard"
+                    />
+                  )}
+                </ReactInputMask>
                 <TextField
                   label="Senha"
                   type="password"
@@ -83,31 +138,27 @@ const Login = () => {
                   onChange={(e) =>
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      password: e.target.value,
+                      COD_SENHA_USU: e.target.value,
                     })
                   }
-                />
-                <TextField
-                  label="Confirmação de senha"
-                  type="password"
-                  variant="standard"
                 />
                 <FormControl fullWidth variant="standard">
                   <InputLabel>Perfil</InputLabel>
                   <Select
                     label="Perfil"
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const isPesquisador = e.target.value === "Pesquisador";
                       setValueRegisterUser({
                         ...valueRegisterUser,
-                        perfil: e.target.value,
-                      })
-                    }
+                        PESQUISADOR: isPesquisador,
+                      });
+                    }}
                   >
                     <MenuItem value="Visitante">Visitante</MenuItem>
                     <MenuItem value="Pesquisador">Pesquisador</MenuItem>
                   </Select>
                 </FormControl>
-                {valueRegisterUser.perfil === "Pesquisador" && (
+                {valueRegisterUser.PESQUISADOR && (
                   <>
                     <FormControl fullWidth variant="standard">
                       <InputLabel>Grau acadêmico</InputLabel>
@@ -116,16 +167,15 @@ const Login = () => {
                         onChange={(e) =>
                           setValueRegisterUser({
                             ...valueRegisterUser,
-                            academic_degree: e.target.value,
+                            SEQ_GRA: e.target.value,
                           })
                         }
                       >
-                        <MenuItem value="Curso Técnico - CTeSP">
-                          Curso Técnico - CTeSP
-                        </MenuItem>
-                        <MenuItem value="Licenciatura">Licenciatura</MenuItem>
-                        <MenuItem value="Mestrado">Mestrado</MenuItem>
-                        <MenuItem value="Doutoramento">Doutoramento</MenuItem>
+                        {dataGrauAcademico.map((item) => (
+                          <MenuItem key={item.seq_gra} value={item.seq_gra}>
+                            {item.nom_gra}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                     <FormControl fullWidth variant="standard">
@@ -135,11 +185,15 @@ const Login = () => {
                         onChange={(e) =>
                           setValueRegisterUser({
                             ...valueRegisterUser,
-                            entity: e.target.value,
+                            SEQ_INS: e.target.value,
                           })
                         }
                       >
-                        <MenuItem value="Teste">Teste</MenuItem>
+                        {dataInstituicao.map((item) => (
+                          <MenuItem key={item.seq_ins} value={item.seq_ins}>
+                            {item.nom_ins}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   </>
@@ -158,7 +212,7 @@ const Login = () => {
             type="submit"
             className="btn-submit"
             onClick={() => {
-              handleTogglePage();
+              handleSumitLogin();
             }}
           >
             {!isRegister ? "Entrar" : "Cadastrar"}
