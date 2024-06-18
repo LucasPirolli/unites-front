@@ -39,12 +39,12 @@ const Login = () => {
   const [dataInstituicao, setDataInstituicao] = useState([]);
   const [dataGrauAcademico, setDataGrauAcademico] = useState([]);
   const [valueRegisterUser, setValueRegisterUser] = useState({
-    NOM_COMPLETO_USU: "",
-    COD_CPF_USU: "",
-    COD_SENHA_USU: "",
-    PESQUISADOR: "",
-    SEQ_GRA: "",
-    SEQ_INS: "",
+    nom_completo_usu: "",
+    cod_cpf_usu: "",
+    cod_senha_usu: "",
+    pesquisador: "",
+    seq_gra: "",
+    seq_ins: "",
   });
   const { cpf, setCpf, password, setPassword, setIsAdmin } = useAuth();
 
@@ -53,12 +53,12 @@ const Login = () => {
   const handleActiveRegisterForm = () => {
     setIsRegister(!isRegister);
     setValueRegisterUser({
-      NOM_COMPLETO_USU: "",
-      COD_CPF_USU: "",
-      COD_SENHA_USU: "",
-      PESQUISADOR: "",
-      SEQ_GRA: "",
-      SEQ_INS: "",
+      nom_completo_usu: "",
+      cod_cpf_usu: "",
+      cod_senha_usu: "",
+      pesquisador: "",
+      seq_gra: "",
+      seq_ins: "",
     });
   };
 
@@ -190,7 +190,7 @@ const Login = () => {
                   onChange={(e) =>
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      NOM_COMPLETO_USU: e.target.value,
+                      nom_completo_usu: e.target.value,
                     })
                   }
                 />
@@ -200,7 +200,7 @@ const Login = () => {
                   onChange={(e) => {
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      COD_CPF_USU: e.target.value,
+                      cod_cpf_usu: e.target.value,
                     });
                   }}
                 >
@@ -220,7 +220,7 @@ const Login = () => {
                   onChange={(e) =>
                     setValueRegisterUser({
                       ...valueRegisterUser,
-                      COD_SENHA_USU: e.target.value,
+                      cod_senha_usu: e.target.value,
                     })
                   }
                 />
@@ -232,7 +232,7 @@ const Login = () => {
                       const isPesquisador = e.target.value === "Pesquisador";
                       setValueRegisterUser({
                         ...valueRegisterUser,
-                        PESQUISADOR: isPesquisador,
+                        pesquisador: isPesquisador,
                       });
                     }}
                   >
@@ -240,7 +240,7 @@ const Login = () => {
                     <MenuItem value="Pesquisador">Pesquisador</MenuItem>
                   </Select>
                 </FormControl>
-                {valueRegisterUser.PESQUISADOR && (
+                {valueRegisterUser.pesquisador && (
                   <>
                     <FormControl fullWidth variant="standard">
                       <InputLabel>Grau acadêmico</InputLabel>
@@ -249,7 +249,7 @@ const Login = () => {
                         onChange={(e) =>
                           setValueRegisterUser({
                             ...valueRegisterUser,
-                            SEQ_GRA: e.target.value,
+                            seq_gra: e.target.value,
                           })
                         }
                       >
@@ -267,7 +267,7 @@ const Login = () => {
                         onChange={(e) =>
                           setValueRegisterUser({
                             ...valueRegisterUser,
-                            SEQ_INS: e.target.value,
+                            seq_ins: e.target.value,
                           })
                         }
                       >
