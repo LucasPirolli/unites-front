@@ -8,6 +8,8 @@ import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import CastleIcon from "@mui/icons-material/Castle";
 import SchoolIcon from "@mui/icons-material/School";
+import ApartmentIcon from "@mui/icons-material/Apartment";
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
@@ -46,6 +48,18 @@ const Home = () => {
       description:
         "Disciplina, disciplina científica, disciplina académica ou disciplina acadêmica designam um determinado ramo do conhecimento",
     },
+    {
+      icon: <ApartmentIcon />,
+      title: "Empresas financiadoras",
+      description:
+        "É uma organização cuja finalidade é otimizar a alocação de capitais financeiros próprios e/ou de terceiros.",
+    },
+    {
+      icon: <AccountTreeIcon />,
+      title: "Projetos",
+      description:
+        "É um esforço único, temporário e progressivo empreendido para criar um produto, serviço ou resultado exclusivo.",
+    },
   ];
 
   const visibleInfoCards = infoCards.filter((card) => {
@@ -63,8 +77,10 @@ const Home = () => {
       navigate("/academic_productions");
     } else if (page === "Instituições") {
       navigate("/institutions");
-    } else {
+    } else if (page === "Áreas acadêmicas") {
       navigate("/academic_areas");
+    } else if (page === "Empresas financiadoras") {
+      navigate("/company");
     }
   };
 

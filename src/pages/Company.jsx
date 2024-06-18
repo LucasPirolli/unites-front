@@ -5,11 +5,7 @@ import React, { useState, useEffect } from "react";
 import Topbar from "../components/Topbar";
 
 // Componentes de terceiros
-import {
-  Button,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Button, Modal, TextField } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -20,31 +16,31 @@ import Box from "@mui/material/Box";
 import { Dimmer, Loader } from "semantic-ui-react";
 import ReactInputMask from "react-input-mask";
 
+// Componentes UNITES
+import Toast from "../components/toast";
+
 // API UNITES
 import {
-  createInstituicao,
-  deleteInstituicao,
-  getInstituicao,
-  updateInstituicao,
+  createEmpresa,
+  deleteEmpresa,
+  getEmpresa,
+  updateEmpresa,
 } from "../services/endpoits";
 
 // Estilos UNITES
-import "../dist/scss/pages/institutions.scss";
 import { style } from "../utils/utils";
 
 // Icones MUI
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Toast from "../components/toast";
 
-const Institutions = () => {
+const Company = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [dataInstituicoes, setDataInstituicoes] = useState([]);
+  const [dataEmpresa, setDataEmpresa] = useState([]);
   const [selectedItemModal, setSelectedItemModal] = useState({
-    cod_cnpj_ins: "",
-    nom_ins: "",
-    nom_sigla_ins: "",
+    cod_cnpj_emp: "",
+    nom_emp: "",
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -58,9 +54,8 @@ const Institutions = () => {
     setIsEditing(false);
     setIsLoading(false);
     setSelectedItemModal({
-      cod_cnpj_ins: "",
-      nom_ins: "",
-      nom_sigla_ins: "",
+      cod_cnpj_emp: "",
+      nom_emp: "",
     });
   };
 
@@ -70,25 +65,29 @@ const Institutions = () => {
     setModalIsOpen(true);
   };
 
-  const handleSubmitInstitutions = async () => {
+  useEffect(() => {
+    console.log("sele", selectedItemModal);
+  }, [selectedItemModal]);
+
+  const handleSubmitEmpresa = async () => {
     setIsLoading(true);
     try {
       if (isEditing) {
-        const response = await updateInstituicao(selectedItemModal);
-        console.log('response', response);
+        const response = await updateEmpresa(selectedItemModal);
+
         if (response.Message === "All documents updated!") {
           Toast("success", "Item atualizado com sucesso!");
           setTimeout(() => {
             setIsLoading(false);
             handleCloseModal();
-            fetchInstituicoes();
+            fetchEmpresa();
           }, 1500);
         } else if (
-          response.Message === "Institution with informed CNPJ allready exists!"
+          response.Message === "Company with informed CNPJ allready exists!"
         ) {
           Toast(
             "info",
-            "Você está tentando criar uma instituição que já existe!"
+            "Você está tentando cadastrar uma empresa que já existe!"
           );
           setIsLoading(false);
         } else {
@@ -96,21 +95,20 @@ const Institutions = () => {
           setIsLoading(false);
         }
       } else {
-        const response = await createInstituicao(selectedItemModal);
-        console.log("response", response);
+        const response = await createEmpresa(selectedItemModal);
         if (response.Message === "All documents inserted!") {
           Toast("success", "Item inserido com sucesso!");
           setTimeout(() => {
             setIsLoading(false);
             handleCloseModal();
-            fetchInstituicoes();
+            fetchEmpresa();
           }, 1500);
         } else if (
-          response.Message === "Institution with informed CNPJ allready exists!"
+          response.Message === "Company with informed CNPJ allready exists!"
         ) {
           Toast(
             "info",
-            "Você está tentando cadastrar uma instituição que já existe!"
+            "Você está tentando cadastrar uma empresa que já existe!"
           );
           setIsLoading(false);
         } else {
@@ -124,15 +122,13 @@ const Institutions = () => {
     }
   };
 
-  const handleDeleteInstitutions = async (id) => {
+  const handleDeleteEmpresa = async (id) => {
     try {
-      const response = await deleteInstituicao(id);
-
-      console.log(response);
+      const response = await deleteEmpresa(id);
 
       if (response.Message === "All documents deleted!") {
         Toast("success", "Item excluído com sucesso!");
-        fetchInstituicoes();
+        fetchEmpresa();
         handleCloseModal();
       } else {
         Toast("error", "Erro ao excluir item, tente novamente!");
@@ -142,12 +138,12 @@ const Institutions = () => {
     }
   };
 
-  const fetchInstituicoes = async () => {
+  const fetchEmpresa = async () => {
     try {
-      const response = await getInstituicao();
+      const response = await getEmpresa();
 
       if (response.Message) {
-        setDataInstituicoes(response.Message);
+        setDataEmpresa(response.Message);
       }
     } catch (error) {
       console.log(error);
@@ -155,14 +151,14 @@ const Institutions = () => {
   };
 
   useEffect(() => {
-    fetchInstituicoes();
+    fetchEmpresa();
   }, []);
 
   return (
     <>
       <Topbar />
       <div className="container-actions">
-        <span className="title">Instuições</span>
+        <span className="title">Empresas financiadoras</span>
         <div className="content-actions">
           <Button
             variant="contained"
@@ -174,7 +170,7 @@ const Institutions = () => {
         </div>
       </div>
       <div className="container-table">
-        {dataInstituicoes.length > 0 ? (
+        {dataEmpresa.length > 0 ? (
           <>
             <TableContainer
               sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
@@ -189,14 +185,12 @@ const Institutions = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Nome</TableCell>
-                    <TableCell>Sigla</TableCell>
-                    <TableCell>CNPJ</TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataInstituicoes?.length > 0 &&
-                    dataInstituicoes.map((row, index) => (
+                  {dataEmpresa?.length > 0 &&
+                    dataEmpresa.map((row, index) => (
                       <TableRow
                         key={index}
                         sx={{
@@ -206,13 +200,10 @@ const Institutions = () => {
                         }}
                       >
                         <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.nom_ins}
+                          {row.nom_emp}
                         </TableCell>
                         <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.nom_sigla_ins}
-                        </TableCell>
-                        <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.cod_cnpj_ins}
+                          {row.cod_cnpj_emp}
                         </TableCell>
                         <TableCell sx={{ fontSize: ".75rem" }}>
                           <EditIcon
@@ -229,9 +220,7 @@ const Institutions = () => {
                               height: "0.75em",
                               cursor: "pointer",
                             }}
-                            onClick={() =>
-                              handleDeleteInstitutions(row.seq_ins)
-                            }
+                            onClick={() => handleDeleteEmpresa(row.seq_emp)}
                           />
                         </TableCell>
                       </TableRow>
@@ -254,63 +243,44 @@ const Institutions = () => {
             className="title"
             style={{ color: "#343434", fontSize: "1rem", fontWeight: 500 }}
           >
-            {isEditing ? "Edite a" : "Cadastro de"} produção acadêmica
+            {isEditing ? "Edite a" : "Cadastro de"} área acadêmica
           </span>
+
+          <ReactInputMask
+            mask="99.999.999/9999-99"
+            value={selectedItemModal && selectedItemModal.cod_cnpj_emp}
+            onChange={(e) => {
+              setSelectedItemModal({
+                ...selectedItemModal,
+                cod_cnpj_emp: e.target.value,
+              });
+            }}
+          >
+            {(inputProps) => (
+              <TextField
+                {...inputProps}
+                label="CNPJ"
+                type="text"
+                variant="outlined"
+              />
+            )}
+          </ReactInputMask>
 
           <TextField
             label="Nome"
             type="text"
             variant="outlined"
-            defaultValue={selectedItemModal && selectedItemModal.nom_ins}
+            defaultValue={selectedItemModal && selectedItemModal.nom_emp}
             onChange={(e) => {
               setSelectedItemModal({
                 ...selectedItemModal,
-                nom_ins: e.target.value,
+                nom_emp: e.target.value,
               });
             }}
           />
 
-          <div className="container">
-            <TextField
-              label="Sigla"
-              type="text"
-              variant="outlined"
-              defaultValue={
-                selectedItemModal && selectedItemModal.nom_sigla_ins
-              }
-              onChange={(e) => {
-                setSelectedItemModal({
-                  ...selectedItemModal,
-                  nom_sigla_ins: e.target.value,
-                });
-              }}
-            />
-            <ReactInputMask
-              mask="99.999.999/9999-99"
-              value={selectedItemModal && selectedItemModal.cod_cnpj_ins}
-              onChange={(e) => {
-                setSelectedItemModal({
-                  ...selectedItemModal,
-                  cod_cnpj_ins: e.target.value,
-                });
-              }}
-            >
-              {(inputProps) => (
-                <TextField
-                  {...inputProps}
-                  label="CNPJ"
-                  type="text"
-                  variant="outlined"
-                />
-              )}
-            </ReactInputMask>
-          </div>
-
           <div className="actions">
-            <Button
-              variant="contained"
-              onClick={() => handleSubmitInstitutions()}
-            >
+            <Button variant="contained" onClick={() => handleSubmitEmpresa()}>
               {isLoading ? (
                 <Loader size={"tiny"} active inline="centered" />
               ) : (
@@ -327,4 +297,4 @@ const Institutions = () => {
   );
 };
 
-export default Institutions;
+export default Company;
