@@ -60,6 +60,18 @@ export const getAreaAcademica = async () => {
   }
 };
 
+export const getEmpresa = async () => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/empresa`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const createUser = async (userData) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/usuario`, {
@@ -121,6 +133,26 @@ export const createAreaAcademica = async (body) => {
   }
 };
 
+export const createEmpresa = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/empresa`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const updateInstituicao = async (body) => {
   try {
     const response = await fetch(
@@ -161,6 +193,27 @@ export const updateAreaAcademica = async (body) => {
   }
 };
 
+export const updateEmpresa = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/empresa`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
 export const deleteInstituicao = async (id) => {
   try {
     const response = await fetch(
@@ -184,6 +237,25 @@ export const deleteAreaAcademica = async (id) => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BASE_PATH}/areaAcademica/SEQ_ARE/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch data");
+  }
+};
+
+export const deleteEmpresa = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/empresa/SEQ_EMP/${id}`,
       {
         method: "DELETE",
         headers: {
