@@ -23,6 +23,7 @@ import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
 import { Dimmer, Loader } from "semantic-ui-react";
 import { CustomProvider, DatePicker } from "rsuite";
+import { InputAdornment } from "@mui/material";
 
 // Componentes UNITES
 import Toast from "../components/toast";
@@ -45,6 +46,7 @@ import { useNavigate } from "react-router-dom";
 // Icones MUI
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import EditIcon from "@mui/icons-material/Edit";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Project = () => {
   const navigate = useNavigate();
@@ -56,6 +58,9 @@ const Project = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [filter, setFilter] = useState("");
+  const [filteredData, setFilteredData] = useState(dataProjeto);
 
   const mappedSeqEmp = dataFinanciamento.map((item) => ({
     seq_emp: item.seq_emp,
@@ -174,7 +179,17 @@ const Project = () => {
     });
   }, [dataFinanciamento]);
 
-  // Realizar a criação/edição dos projetos
+  useEffect(() => {
+    setFilteredData(
+      dataProjeto.filter((item) =>
+        Object.values(item).some(
+          (val) =>
+            typeof val === "string" &&
+            val.toLowerCase().includes(filter.toLowerCase())
+        )
+      )
+    );
+  }, [filter, dataProjeto]);
 
   return (
     <>
@@ -191,8 +206,23 @@ const Project = () => {
           </Button>
         </div>
       </div>
+      <TextField
+        placeholder="Digite"
+        className="input-filter"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="end">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        variant="outlined"
+        size="small"
+        sx={{ width: 250 }}
+        onChange={(e) => setFilter(e.target.value)}
+      />
       <div className="container-table">
-        {dataProjeto.length > 0 ? (
+        {filteredData.length > 0 ? (
           <>
             <TableContainer
               sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
@@ -214,8 +244,8 @@ const Project = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataProjeto?.length > 0 &&
-                    dataProjeto.map((row, index) => (
+                  {filteredData?.length > 0 &&
+                    filteredData.map((row, index) => (
                       <TableRow
                         key={index}
                         sx={{

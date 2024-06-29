@@ -24,6 +24,14 @@
   }
 }
 
+.input-filter {
+  padding-left: 16px !important;
+  padding-top: 16px !important;
+  > .MuiOutlinedInput-root {
+    padding-left: 0 !important;
+  }
+}
+
 .container-table {
   padding: 16px;
 }

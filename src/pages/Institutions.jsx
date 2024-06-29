@@ -3,13 +3,10 @@ import React, { useState, useEffect } from "react";
 
 // Componentes UNITES
 import Topbar from "../components/Topbar";
+import Toast from "../components/toast";
 
 // Componentes de terceiros
-import {
-  Button,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Button, Modal, TextField } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,6 +16,7 @@ import TableRow from "@mui/material/TableRow";
 import Box from "@mui/material/Box";
 import { Dimmer, Loader } from "semantic-ui-react";
 import ReactInputMask from "react-input-mask";
+import { InputAdornment } from "@mui/material";
 
 // API UNITES
 import {
@@ -29,14 +27,13 @@ import {
 } from "../services/endpoits";
 
 // Estilos UNITES
-import "../dist/scss/pages/institutions.scss";
 import { style } from "../utils/utils";
 
 // Icones MUI
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import Toast from "../components/toast";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Institutions = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -48,6 +45,9 @@ const Institutions = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const [filter, setFilter] = useState("");
+  const [filteredData, setFilteredData] = useState(dataInstituicoes);
 
   const handleOpenModal = () => {
     setModalIsOpen(true);
@@ -75,7 +75,7 @@ const Institutions = () => {
     try {
       if (isEditing) {
         const response = await updateInstituicao(selectedItemModal);
-        console.log('response', response);
+        console.log("response", response);
         if (response.Message === "All documents updated!") {
           Toast("success", "Item atualizado com sucesso!");
           setTimeout(() => {
@@ -158,6 +158,18 @@ const Institutions = () => {
     fetchInstituicoes();
   }, []);
 
+  useEffect(() => {
+    setFilteredData(
+      dataInstituicoes.filter((item) =>
+        Object.values(item).some(
+          (val) =>
+            typeof val === "string" &&
+            val.toLowerCase().includes(filter.toLowerCase())
+        )
+      )
+    );
+  }, [filter, dataInstituicoes]);
+
   return (
     <>
       <Topbar />
@@ -173,8 +185,23 @@ const Institutions = () => {
           </Button>
         </div>
       </div>
+      <TextField
+        placeholder="Digite"
+        className="input-filter"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="end">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        variant="outlined"
+        size="small"
+        sx={{ width: 250 }}
+        onChange={(e) => setFilter(e.target.value)}
+      />
       <div className="container-table">
-        {dataInstituicoes.length > 0 ? (
+        {filteredData.length > 0 ? (
           <>
             <TableContainer
               sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
@@ -195,8 +222,8 @@ const Institutions = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataInstituicoes?.length > 0 &&
-                    dataInstituicoes.map((row, index) => (
+                  {filteredData?.length > 0 &&
+                    filteredData.map((row, index) => (
                       <TableRow
                         key={index}
                         sx={{

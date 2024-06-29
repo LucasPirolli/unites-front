@@ -11,23 +11,31 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { Dimmer, Loader } from "semantic-ui-react";
+import { InputAdornment, TextField } from "@mui/material";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
+import { format } from "date-fns";
 
 // Estilos UNITES
 import "../dist/scss/pages/academicproductions.scss";
 
 // Icones MUI
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+
+// API UNITES
 import { getPesquisa } from "../services/endpoits";
-import { format } from "date-fns";
-import { Dimmer, Loader } from "semantic-ui-react";
+
+// Icones MUI
+import SearchIcon from "@mui/icons-material/Search";
 
 const AcademicProductions = () => {
   const navigate = useNavigate();
   const [dataPesquisa, setDataPesquisa] = useState([]);
+
+  const [filter, setFilter] = useState("");
+  const [filteredData, setFilteredData] = useState(dataPesquisa);
 
   const handleTogglePageActionsAcademicProductions = (item) => {
     navigate("/actions_academic_productions", {
@@ -52,13 +60,40 @@ const AcademicProductions = () => {
     fetchPesquisa();
   }, []);
 
+  useEffect(() => {
+    setFilteredData(
+      dataPesquisa.filter((item) =>
+        Object.values(item).some(
+          (val) =>
+            typeof val === "string" &&
+            val.toLowerCase().includes(filter.toLowerCase())
+        )
+      )
+    );
+  }, [filter, dataPesquisa]);
+
   return (
     <>
       <Topbar />
       <div className="container-actions">
         <span className="title">Produções Acadêmicas</span>
       </div>
-      {dataPesquisa.length > 0 ? (
+      <TextField
+        placeholder="Digite"
+        className="input-filter"
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="end">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        }}
+        variant="outlined"
+        size="small"
+        sx={{ width: 250 }}
+        onChange={(e) => setFilter(e.target.value)}
+      />
+      {filteredData.length > 0 ? (
         <div className="container-table">
           <TableContainer sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
             <Table
@@ -78,7 +113,7 @@ const AcademicProductions = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {dataPesquisa.map((row, index) => (
+                {filteredData.map((row, index) => (
                   <TableRow
                     key={index}
                     sx={{
