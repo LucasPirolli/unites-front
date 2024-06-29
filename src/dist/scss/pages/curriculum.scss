@@ -1,0 +1,36 @@
+.container-back-page {
+  width: 100%;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  > .name-user {
+    color: #1e232c;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+}
+
+.container-curriculum {
+  display: flex;
+  padding: 14px;
+  flex-direction: column;
+  gap: 15px;
+
+  > .container {
+    width: 100%;
+    gap: 15px;
+    display: flex;
+  }
+  > .container-table {
+    padding: 0;
+    > .title {
+      color: #1e232c;
+      text-align: center;
+      font-size: 0.857rem;
+      font-weight: 700;
+      padding-bottom: 5px;
+    }
+  }
+}

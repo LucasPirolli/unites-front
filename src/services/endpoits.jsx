@@ -34,6 +34,30 @@ export const getPesquisadores = async () => {
   }
 };
 
+export const getPesquisadoresBySeqPes = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/pesquisador/SEQ_PES/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
+
+export const getPesquisadoresBySeqPro = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/pesquisador/SEQ_PRO/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
+
 export const getLogin = async (cpf, passwd) => {
   try {
     const response = await fetch(
@@ -62,8 +86,110 @@ export const getAreaAcademica = async () => {
 
 export const getEmpresa = async () => {
   try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/empresa`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getProjetoBySeqUsu = async (id) => {
+  try {
     const response = await fetch(
-      `${import.meta.env.VITE_BASE_PATH}/empresa`
+      `${import.meta.env.VITE_BASE_PATH}/projeto/SEQ_USU/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getProjetoBySeqPes = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/projeto/SEQ_PES/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getPesquisaBySeqUsu = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/pesquisa/SEQ_USU/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getPesquisaBySeqPro = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/pesquisa/SEQ_PRO/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getPesquisadoresConectadosBySeqUsu = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/pesquisador/SEQ_USU/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getProjeto = async () => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/projeto`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getPesquisa = async () => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/pesquisa`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getConexaoBySeqUsu = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/conexao/SEQ_USU/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const getFinanciamentoBySeqPro = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/financiamento/SEQ_PRO/${id}`
     );
     const data = await response.json();
     return data;
@@ -135,8 +261,25 @@ export const createAreaAcademica = async (body) => {
 
 export const createEmpresa = async (body) => {
   try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/empresa`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const createConexao = async (body) => {
+  try {
     const response = await fetch(
-      `${import.meta.env.VITE_BASE_PATH}/empresa`,
+      `${import.meta.env.VITE_BASE_PATH}/usuario/conexao`,
       {
         method: "POST",
         headers: {
@@ -145,6 +288,40 @@ export const createEmpresa = async (body) => {
         body: JSON.stringify(body),
       }
     );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const createProjeto = async (body) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/projeto`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const createPesquisa = async (body) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/pesquisa`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
 
     const data = await response.json();
     return data;
@@ -195,16 +372,13 @@ export const updateAreaAcademica = async (body) => {
 
 export const updateEmpresa = async (body) => {
   try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BASE_PATH}/empresa`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }
-    );
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/empresa`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
 
     const data = await response.json();
     return data;
@@ -213,6 +387,56 @@ export const updateEmpresa = async (body) => {
   }
 };
 
+export const updateUser = async (body) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/usuario`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updatePesquisa = async (body) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/pesquisa`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export const updateProjeto = async (body) => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_PATH}/projeto`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 export const deleteInstituicao = async (id) => {
   try {
@@ -268,5 +492,25 @@ export const deleteEmpresa = async (id) => {
     return data;
   } catch (error) {
     throw new Error(error.message || "Failed to fetch data");
+  }
+};
+
+export const deleteConexao = async (body) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/conexao`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+      }
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
   }
 };

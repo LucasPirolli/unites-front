@@ -128,10 +128,6 @@ const AcademicAreas = () => {
   };
 
   useEffect(() => {
-    console.log("selectedItemModal", selectedItemModal);
-  }, [selectedItemModal]);
-
-  useEffect(() => {
     fetchAreaAcademica();
   }, []);
 

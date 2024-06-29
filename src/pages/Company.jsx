@@ -65,10 +65,6 @@ const Company = () => {
     setModalIsOpen(true);
   };
 
-  useEffect(() => {
-    console.log("sele", selectedItemModal);
-  }, [selectedItemModal]);
-
   const handleSubmitEmpresa = async () => {
     setIsLoading(true);
     try {
@@ -158,7 +154,7 @@ const Company = () => {
     <>
       <Topbar />
       <div className="container-actions">
-        <span className="title">Empresas financiadoras</span>
+        <span className="title">Ação de captação de recurso</span>
         <div className="content-actions">
           <Button
             variant="contained"

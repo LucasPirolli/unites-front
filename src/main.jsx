@@ -16,7 +16,10 @@ import Institutions from "./pages/Institutions";
 import Researchers from "./pages/Researchers";
 import AcademicAreas from "./pages/AcademicAreas";
 import Company from "./pages/Company";
-
+import Curriculum from "./pages/Curriculum";
+import Project from "./pages/Project";
+import ActionsAcademicProductions from "./pages/ActionsAcademicProductions";
+import ActionsProject from "./pages/ActionsProject";
 
 // Contexto UNITES
 import { AuthProvider } from "./context/AuthContext";
@@ -27,6 +30,7 @@ import "./main.scss";
 // Estilos terceiros
 import "semantic-ui-css/semantic.min.css";
 import "react-toastify/dist/ReactToastify.css";
+import "rsuite/dist/rsuite.min.css";
 
 const Main = () => {
   return (
@@ -39,6 +43,10 @@ const Main = () => {
         <Route path="/researchers" element={<Researchers />} />
         <Route path="/academic_areas" element={<AcademicAreas />} />
         <Route path="/company" element={<Company />} />
+        <Route path="/curriculum" element={<Curriculum />} />
+        <Route path="/project" element={<Project />} />
+        <Route path="/actions_academic_productions" element={<ActionsAcademicProductions />} />
+        <Route path="/actions_project" element={<ActionsProject />} />
       </Routes>
     </Router>
   );

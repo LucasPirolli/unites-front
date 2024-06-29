@@ -95,9 +95,9 @@ const Login = () => {
       if (type === "register") {
         let userData = { ...valueRegisterUser };
 
-        if (!userData.PESQUISADOR) {
-          delete userData.SEQ_GRA;
-          delete userData.SEQ_INS;
+        if (!userData.pesquisador) {
+          delete userData.seq_gra;
+          delete userData.seq_ins;
         }
 
         const response = await createUser(userData);
@@ -113,6 +113,7 @@ const Login = () => {
       } else if (type === "login") {
         const response = await getLogin(cpf, password);
         if (response.Message !== "No documents were found") {
+          localStorage.setItem("id", response.Message[0].seq_usu);
           localStorage.setItem("cpf", cpf);
           localStorage.setItem("password", password);
           localStorage.setItem("isAdmin", response.Message[0].flg_adm_usu);

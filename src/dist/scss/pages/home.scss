@@ -9,9 +9,19 @@
   padding: 40px 60px;
   grid-template-columns: repeat(3, 1fr);
   gap: 25px;
+  &.default {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .card {
+      width: 500px;
+      height: 350px;
+    }
+  }
   > .card {
     background-color: #f7f7f7;
-    height: 350px;
+    height: 100%;
     width: 100%;
     padding: 14px;
     display: flex;

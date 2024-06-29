@@ -15,3 +15,10 @@
     transform: translate(476px, 565px) !important;
   }
 }
+
+.rs-picker {
+  width: 100% !important;
+}
+.rs-picker-popup {
+  z-index: 100000 !important;
+}

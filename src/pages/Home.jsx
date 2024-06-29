@@ -50,7 +50,7 @@ const Home = () => {
     },
     {
       icon: <ApartmentIcon />,
-      title: "Empresas financiadoras",
+      title: "Ação de captação de recurso",
       description:
         "É uma organização cuja finalidade é otimizar a alocação de capitais financeiros próprios e/ou de terceiros.",
     },
@@ -63,10 +63,10 @@ const Home = () => {
   ];
 
   const visibleInfoCards = infoCards.filter((card) => {
-    if (isAdmin === 1) {
+    if (isAdmin === 1 || isAdmin === "1") {
       return true;
     } else {
-      return card.title === "Pesquisadores" || card.title === "Produções";
+      return card.title === "Pesquisadores" || card.title === "Produções" || card.title === "Projetos" || card.title === "Ação de captação de recurso";
     }
   });
 
@@ -79,20 +79,22 @@ const Home = () => {
       navigate("/institutions");
     } else if (page === "Áreas acadêmicas") {
       navigate("/academic_areas");
-    } else if (page === "Empresas financiadoras") {
+    } else if (page === "Ação de captação de recurso") {
       navigate("/company");
+    } else if (page === "Projetos") {
+      navigate("/project");
     }
   };
 
   useEffect(() => {
     if (typeof isAdmin !== "number")
-      setIsAdmin(JSON.parse(localStorage.getItem("isAdmin")));
+      setIsAdmin(localStorage.getItem("isAdmin"));
   }, [typeof isAdmin !== "number"]);
 
   return (
     <>
       <Topbar />
-      <div className="container-home">
+      <div className={`container-home ${isAdmin === 1 || isAdmin === "1" ? "" : "default"}`}>
         {visibleInfoCards.map((item, index) => {
           return (
             <div
