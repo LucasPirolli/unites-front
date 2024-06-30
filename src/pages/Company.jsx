@@ -275,7 +275,7 @@ const Company = () => {
             className="title"
             style={{ color: "#343434", fontSize: "1rem", fontWeight: 500 }}
           >
-            {isEditing ? "Edite a" : "Cadastro de"} área acadêmica
+            {isEditing ? "Edite a" : "Cadastro de"} ação captação de recurso
           </span>
 
           <TextField

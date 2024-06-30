@@ -583,7 +583,7 @@ const ActionsProject = () => {
                 >
                   <TableHead>
                     <TableRow>
-                      <TableCell>Empresa</TableCell>
+                      <TableCell>Ação de captação de recurso</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>

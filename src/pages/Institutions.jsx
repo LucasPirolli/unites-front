@@ -287,7 +287,7 @@ const Institutions = () => {
             className="title"
             style={{ color: "#343434", fontSize: "1rem", fontWeight: 500 }}
           >
-            {isEditing ? "Edite a" : "Cadastro de"} produção acadêmica
+            {isEditing ? "Edite a" : "Cadastro de"} instituições
           </span>
 
           <TextField
