@@ -117,6 +117,7 @@ const Login = () => {
           localStorage.setItem("cpf", cpf);
           localStorage.setItem("password", password);
           localStorage.setItem("isAdmin", response.Message[0].flg_adm_usu);
+          localStorage.setItem("isPesquisador", response.Message[0].flg_pes_usu);
 
           Toast("success", "Login realizado com sucesso!");
           setTimeout(() => {

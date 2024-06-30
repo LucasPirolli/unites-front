@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Topbar from "../components/Topbar";
 
 // Componentes de terceiros
-import { Button, Modal, TextField } from "@mui/material";
+import { Button, Modal, TextField, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -139,10 +139,10 @@ const AcademicAreas = () => {
   useEffect(() => {
     setFilteredData(
       dataAreasAcademicas.filter((item) =>
-        Object.values(item).some(
-          (val) =>
-            typeof val === "string" &&
-            val.toLowerCase().includes(filter.toLowerCase())
+        ["nom_are"].some(
+          (key) =>
+            item[key] &&
+            item[key].toString().toLowerCase().includes(filter.toLowerCase())
         )
       )
     );
@@ -239,9 +239,15 @@ const AcademicAreas = () => {
           </>
         ) : (
           <>
-            <Dimmer active inverted>
-              <Loader size="small" />
-            </Dimmer>
+            {filter ? (
+              <Typography sx={{ padding: 2, textAlign: "center" }}>
+                Nenhum item encontrado para esse filtro aplicado
+              </Typography>
+            ) : (
+              <Dimmer active inverted>
+                <Loader size="small" />
+              </Dimmer>
+            )}
           </>
         )}
       </div>

@@ -282,6 +282,16 @@ const ActionsAcademicProductions = () => {
 
         {/* </div> */}
         <CustomProvider locale={ptBR}>
+          <label
+            className="label"
+            style={{
+              marginBottom: "-15px",
+              color: "#1e232c",
+              fontSize: "0.857rem",
+            }}
+          >
+            Data publicação
+          </label>
           <DatePicker
             format="dd/MM/yyyy"
             placeholder="Data publicação"
@@ -434,9 +444,7 @@ const ActionsAcademicProductions = () => {
                               height: "0.75em",
                               cursor: "pointer",
                             }}
-                            onClick={() =>
-                              handleTogglePageActionsProject(row)
-                            }
+                            onClick={() => handleTogglePageActionsProject(row)}
                           />
                         </TableCell>
                       </TableRow>

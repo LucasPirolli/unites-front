@@ -12,7 +12,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Dimmer, Loader } from "semantic-ui-react";
-import { InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField, Typography } from "@mui/material";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
@@ -63,10 +63,10 @@ const AcademicProductions = () => {
   useEffect(() => {
     setFilteredData(
       dataPesquisa.filter((item) =>
-        Object.values(item).some(
-          (val) =>
-            typeof val === "string" &&
-            val.toLowerCase().includes(filter.toLowerCase())
+        ["nom_pes", "des_pes", "nom_are"].some(
+          (key) =>
+            item[key] &&
+            item[key].toString().toLowerCase().includes(filter.toLowerCase())
         )
       )
     );
@@ -154,9 +154,15 @@ const AcademicProductions = () => {
         </div>
       ) : (
         <>
-          <Dimmer active inverted>
-            <Loader size="small" />
-          </Dimmer>
+          {filter ? (
+            <Typography sx={{ padding: 2, textAlign: "center" }}>
+              Nenhum item encontrado para esse filtro aplicado
+            </Typography>
+          ) : (
+            <Dimmer active inverted>
+              <Loader size="small" />
+            </Dimmer>
+          )}
         </>
       )}
     </>

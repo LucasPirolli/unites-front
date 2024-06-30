@@ -12,7 +12,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Dimmer, Loader } from "semantic-ui-react";
-import { InputAdornment, TextField } from "@mui/material";
+import { InputAdornment, TextField, Typography } from "@mui/material";
 
 // Funções de terceiros
 import { useNavigate } from "react-router-dom";
@@ -58,10 +58,10 @@ const Researchers = () => {
   useEffect(() => {
     setFilteredData(
       dataPesquisadores.filter((item) =>
-        Object.values(item).some(
-          (val) =>
-            typeof val === "string" &&
-            val.toLowerCase().includes(filter.toLowerCase())
+        ["nom_completo_usu", "nom_ins", "nom_sigla_ins", "nom_gra"].some(
+          (key) =>
+            item[key] &&
+            item[key].toString().toLowerCase().includes(filter.toLowerCase())
         )
       )
     );
@@ -92,10 +92,7 @@ const Researchers = () => {
         {filteredData.length > 0 ? (
           <TableContainer sx={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}>
             <Table
-              sx={{
-                minWidth: 650,
-                fontSize: "0.75rem",
-              }}
+              sx={{ minWidth: 650, fontSize: "0.75rem" }}
               aria-label="simple table"
             >
               <TableHead>
@@ -111,11 +108,7 @@ const Researchers = () => {
                 {filteredData.map((row, index) => (
                   <TableRow
                     key={index}
-                    sx={{
-                      "&:last-child td, &:last-child th": {
-                        border: 0,
-                      },
-                    }}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell sx={{ fontSize: ".75rem" }}>
                       {row.nom_completo_usu}
@@ -136,9 +129,7 @@ const Researchers = () => {
                           height: "0.75em",
                           cursor: "pointer",
                         }}
-                        onClick={() => {
-                          handleTogglePage(row);
-                        }}
+                        onClick={() => handleTogglePage(row)}
                       />
                     </TableCell>
                   </TableRow>
@@ -147,9 +138,17 @@ const Researchers = () => {
             </Table>
           </TableContainer>
         ) : (
-          <Dimmer active inverted>
-            <Loader size="small" />
-          </Dimmer>
+          <>
+            {filter ? (
+              <Typography sx={{ padding: 2, textAlign: "center" }}>
+                Nenhum item encontrado para esse filtro aplicado
+              </Typography>
+            ) : (
+              <Dimmer active inverted>
+                <Loader size="small" />
+              </Dimmer>
+            )}
+          </>
         )}
       </div>
     </>

@@ -288,8 +288,9 @@ const Curriculum = () => {
       </div>
       <div className="container-curriculum">
         <TextField
+          label="Formação Acadêmica"
           disabled={!isUserAutorized}
-          placeholder="Descrição"
+          placeholder="Formação Acadêmica"
           defaultValue={selectedData && selectedData.des_formacao_usu}
           onChange={(e) =>
             setUserEditing({
@@ -565,6 +566,9 @@ const Curriculum = () => {
                   : () => handleDesconnectUser()
               }
               sx={{ width: "100%", height: "44px" }}
+              disabled={
+                localStorage.getItem("isPesquisador") === "0" ? true : false
+              }
             >
               {isLoadingAction ? (
                 <Loader size={"tiny"} active inline="centered" />

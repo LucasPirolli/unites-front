@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 import Topbar from "../components/Topbar";
 
 // Componentes de terceiros
-import { Button, Modal, TextField } from "@mui/material";
+import { Button, Modal, TextField, Typography } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -41,7 +41,7 @@ const Company = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [dataEmpresa, setDataEmpresa] = useState([]);
   const [selectedItemModal, setSelectedItemModal] = useState({
-    cod_cnpj_emp: "",
+    des_emp: "",
     nom_emp: "",
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -49,6 +49,7 @@ const Company = () => {
 
   const [filter, setFilter] = useState("");
   const [filteredData, setFilteredData] = useState(dataEmpresa);
+  const isPesquisador = localStorage.getItem("isPesquisador") === "0";
 
   const handleOpenModal = () => {
     setModalIsOpen(true);
@@ -59,7 +60,7 @@ const Company = () => {
     setIsEditing(false);
     setIsLoading(false);
     setSelectedItemModal({
-      cod_cnpj_emp: "",
+      des_emp: "",
       nom_emp: "",
     });
   };
@@ -83,14 +84,6 @@ const Company = () => {
             handleCloseModal();
             fetchEmpresa();
           }, 1500);
-        } else if (
-          response.Message === "Company with informed CNPJ allready exists!"
-        ) {
-          Toast(
-            "info",
-            "Você está tentando cadastrar uma empresa que já existe!"
-          );
-          setIsLoading(false);
         } else {
           Toast("error", "Erro ao atualizar item!");
           setIsLoading(false);
@@ -158,10 +151,10 @@ const Company = () => {
   useEffect(() => {
     setFilteredData(
       dataEmpresa.filter((item) =>
-        Object.values(item).some(
-          (val) =>
-            typeof val === "string" &&
-            val.toLowerCase().includes(filter.toLowerCase())
+        ["nom_emp", "des_emp"].some(
+          (key) =>
+            item[key] &&
+            item[key].toString().toLowerCase().includes(filter.toLowerCase())
         )
       )
     );
@@ -174,9 +167,11 @@ const Company = () => {
         <span className="title">Ação de captação de recurso</span>
         <div className="content-actions">
           <Button
+            className={`${isPesquisador ? "disabled" : ""}`}
             variant="contained"
             endIcon={<AddOutlinedIcon />}
             onClick={handleOpenModal}
+            disabled={isPesquisador ? true : false}
           >
             Criar
           </Button>
@@ -213,6 +208,7 @@ const Company = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Nome</TableCell>
+                    <TableCell>Descrição</TableCell>
                     <TableCell>Ações</TableCell>
                   </TableRow>
                 </TableHead>
@@ -231,7 +227,7 @@ const Company = () => {
                           {row.nom_emp}
                         </TableCell>
                         <TableCell sx={{ fontSize: ".75rem" }}>
-                          {row.cod_cnpj_emp}
+                          {row.des_emp}
                         </TableCell>
                         <TableCell sx={{ fontSize: ".75rem" }}>
                           <EditIcon
@@ -242,14 +238,16 @@ const Company = () => {
                             }}
                             onClick={() => handleEditClick(row)}
                           />
-                          <DeleteIcon
-                            sx={{
-                              width: "0.75em",
-                              height: "0.75em",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => handleDeleteEmpresa(row.seq_emp)}
-                          />
+                          {!isPesquisador && (
+                            <DeleteIcon
+                              sx={{
+                                width: "0.75em",
+                                height: "0.75em",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => handleDeleteEmpresa(row.seq_emp)}
+                            />
+                          )}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -259,9 +257,15 @@ const Company = () => {
           </>
         ) : (
           <>
-            <Dimmer active inverted>
-              <Loader size="small" />
-            </Dimmer>
+            {filter ? (
+              <Typography sx={{ padding: 2, textAlign: "center" }}>
+                Nenhum item encontrado para esse filtro aplicado
+              </Typography>
+            ) : (
+              <Dimmer active inverted>
+                <Loader size="small" />
+              </Dimmer>
+            )}
           </>
         )}
       </div>
@@ -273,26 +277,6 @@ const Company = () => {
           >
             {isEditing ? "Edite a" : "Cadastro de"} área acadêmica
           </span>
-
-          <ReactInputMask
-            mask="99.999.999/9999-99"
-            value={selectedItemModal && selectedItemModal.cod_cnpj_emp}
-            onChange={(e) => {
-              setSelectedItemModal({
-                ...selectedItemModal,
-                cod_cnpj_emp: e.target.value,
-              });
-            }}
-          >
-            {(inputProps) => (
-              <TextField
-                {...inputProps}
-                label="CNPJ"
-                type="text"
-                variant="outlined"
-              />
-            )}
-          </ReactInputMask>
 
           <TextField
             label="Nome"
@@ -307,14 +291,30 @@ const Company = () => {
             }}
           />
 
+          <TextField
+            label="Descrição"
+            type="text"
+            variant="outlined"
+            defaultValue={selectedItemModal && selectedItemModal.des_emp}
+            onChange={(e) => {
+              setSelectedItemModal({
+                ...selectedItemModal,
+                des_emp: e.target.value,
+              });
+            }}
+          />
+
           <div className="actions">
-            <Button variant="contained" onClick={() => handleSubmitEmpresa()}>
-              {isLoading ? (
-                <Loader size={"tiny"} active inline="centered" />
-              ) : (
-                <>{isEditing ? "Editar" : "Salvar"}</>
-              )}
-            </Button>
+            {!isPesquisador && (
+              <Button variant="contained" onClick={() => handleSubmitEmpresa()}>
+                {isLoading ? (
+                  <Loader size={"tiny"} active inline="centered" />
+                ) : (
+                  <>{isEditing ? "Editar" : "Salvar"}</>
+                )}
+              </Button>
+            )}
+
             <Button variant="outlined" onClick={handleCloseModal}>
               Fechar
             </Button>

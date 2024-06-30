@@ -118,7 +118,7 @@ const ActionsProject = () => {
   });
 
   useEffect(() => {
-    console.log('sele', selectedData);
+    console.log("sele", selectedData);
   }, [selectedData]);
 
   const handleSubmitProject = async () => {
@@ -253,7 +253,9 @@ const ActionsProject = () => {
     try {
       const response = await getConexaoBySeqUsu(id);
       if (response.Message) {
-        setDataPesquisadores(response.Message);
+        setDataPesquisadores(response.Message !== "No documents were found");
+      } else {
+        setDataPesquisadores([]);
       }
     } catch (error) {
       console.log(error);
@@ -392,6 +394,16 @@ const ActionsProject = () => {
         </FormControl>
 
         <CustomProvider locale={ptBR}>
+          <label
+            className="label"
+            style={{
+              marginBottom: "-15px",
+              color: "#1e232c",
+              fontSize: "0.857rem",
+            }}
+          >
+            Data início
+          </label>
           <DatePicker
             format="dd/MM/yyyy"
             placeholder="Data início"
@@ -411,6 +423,16 @@ const ActionsProject = () => {
         </CustomProvider>
 
         <CustomProvider locale={ptBR}>
+          <label
+            className="label"
+            style={{
+              marginBottom: "-15px",
+              color: "#1e232c",
+              fontSize: "0.857rem",
+            }}
+          >
+            Data final
+          </label>
           <DatePicker
             format="dd/MM/yyyy"
             placeholder="Data final"
@@ -800,11 +822,12 @@ const ActionsProject = () => {
                   .join(", ")
               }
             >
-              {dataPesquisadores.map((item) => (
-                <MenuItem key={item.seq_usu} value={item.seq_usu}>
-                  {item.nom_completo_usu}
-                </MenuItem>
-              ))}
+              {dataPesquisadores?.length > 0 &&
+                dataPesquisadores.map((item) => (
+                  <MenuItem key={item.seq_usu} value={item.seq_usu}>
+                    {item.nom_completo_usu}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
 

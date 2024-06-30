@@ -13,6 +13,7 @@ import {
   Select,
   TextField,
   Modal,
+  Typography,
 } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -58,6 +59,8 @@ const Project = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isPesquisador = localStorage.getItem("isPesquisador") === "0";
 
   const [filter, setFilter] = useState("");
   const [filteredData, setFilteredData] = useState(dataProjeto);
@@ -182,10 +185,10 @@ const Project = () => {
   useEffect(() => {
     setFilteredData(
       dataProjeto.filter((item) =>
-        Object.values(item).some(
-          (val) =>
-            typeof val === "string" &&
-            val.toLowerCase().includes(filter.toLowerCase())
+        ["seq_pro", "nom_pro", "nom_completo_usu"].some(
+          (key) =>
+            item[key] &&
+            item[key].toString().toLowerCase().includes(filter.toLowerCase())
         )
       )
     );
@@ -198,9 +201,11 @@ const Project = () => {
         <span className="title">Projetos</span>
         <div className="content-actions">
           <Button
+            className={`${isPesquisador ? "disabled" : ""}`}
             variant="contained"
             endIcon={<AddOutlinedIcon />}
             onClick={handleOpenModal}
+            disabled={isPesquisador ? true : false}
           >
             Criar
           </Button>
@@ -284,9 +289,15 @@ const Project = () => {
           </>
         ) : (
           <>
-            <Dimmer active inverted>
-              <Loader size="small" />
-            </Dimmer>
+            {filter ? (
+              <Typography sx={{ padding: 2, textAlign: "center" }}>
+                Nenhum item encontrado para esse filtro aplicado
+              </Typography>
+            ) : (
+              <Dimmer active inverted>
+                <Loader size="small" />
+              </Dimmer>
+            )}
           </>
         )}
       </div>
