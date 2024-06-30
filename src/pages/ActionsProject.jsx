@@ -43,7 +43,7 @@ import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import {
   createPesquisa,
   getAreaAcademica,
-  getConexaoBySeqUsu,
+  getConexaoIncluindoBySeqUsu,
   getFinanciamentoBySeqPro,
   getInstituicao,
   getPesquisaBySeqPro,
@@ -87,13 +87,17 @@ const ActionsProject = () => {
     nom_pro: selectedData.nom_pro,
     des_pro: selectedData.des_pro,
     dth_inicio_pro:
-      new Date(
-        new Date(selectedData.dth_inicio_pro).toISOString().slice(0, -1)
-      ) || "",
+      selectedData.dth_inicio_pro === null
+        ? null
+        : new Date(
+            new Date(selectedData.dth_inicio_pro).toISOString().slice(0, -1)
+          ),
     dth_final_pro:
-      new Date(
-        new Date(selectedData.dth_final_pro).toISOString().slice(0, -1)
-      ) || "",
+      selectedData.dth_final_pro === null
+        ? null
+        : new Date(
+            new Date(selectedData.dth_final_pro).toISOString().slice(0, -1)
+          ),
     flg_status_pro: selectedData.flg_status_pro,
     seq_usu_responsavel: selectedData.seq_usu_responsavel,
     seq_emp_list: [],
@@ -116,10 +120,6 @@ const ActionsProject = () => {
     seq_ins: "",
     seq_usu_list: [],
   });
-
-  useEffect(() => {
-    console.log("sele", selectedData);
-  }, [selectedData]);
 
   const handleSubmitProject = async () => {
     setIsLoading(true);
@@ -145,7 +145,6 @@ const ActionsProject = () => {
   };
 
   const handleSubmitModal = async () => {
-    console.log("entrou");
     setIsLoadingModal(true);
     try {
       const response = await createPesquisa(createProducao);
@@ -251,9 +250,9 @@ const ActionsProject = () => {
 
   const fetchPesquisadores = async (id) => {
     try {
-      const response = await getConexaoBySeqUsu(id);
-      if (response.Message) {
-        setDataPesquisadores(response.Message !== "No documents were found");
+      const response = await getConexaoIncluindoBySeqUsu(id);
+      if (response.Message !== "No documents were found") {
+        setDataPesquisadores(response.Message);
       } else {
         setDataPesquisadores([]);
       }
@@ -263,8 +262,8 @@ const ActionsProject = () => {
   };
 
   useEffect(() => {
-    fetchPesquisadoresBySeqPro(selectedData.seq_pro);
     fetchPesquisaBySeqPro(selectedData.seq_pro);
+    fetchPesquisadoresBySeqPro(selectedData.seq_pro);
     fetchFinanciamento(selectedData.seq_pro);
   }, [selectedData]);
 
@@ -278,10 +277,6 @@ const ActionsProject = () => {
       seq_emp_list: seqEmp,
     });
   }, [dataFinanciamento]);
-
-  useEffect(() => {
-    console.log("create", createProducao);
-  }, [createProducao]);
 
   useEffect(() => {
     fetchAreaAcademica();
@@ -446,7 +441,9 @@ const ActionsProject = () => {
             }}
             disabled={!isUserAutorized}
             value={
-              selectedItem.dth_final_pro ? selectedItem.dth_final_pro : null
+              selectedItem.dth_final_pro === null
+                ? null
+                : selectedItem.dth_final_pro
             }
           />
         </CustomProvider>

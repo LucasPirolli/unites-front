@@ -75,7 +75,6 @@ const Institutions = () => {
     try {
       if (isEditing) {
         const response = await updateInstituicao(selectedItemModal);
-        console.log("response", response);
         if (response.Message === "All documents updated!") {
           Toast("success", "Item atualizado com sucesso!");
           setTimeout(() => {
@@ -97,7 +96,6 @@ const Institutions = () => {
         }
       } else {
         const response = await createInstituicao(selectedItemModal);
-        console.log("response", response);
         if (response.Message === "All documents inserted!") {
           Toast("success", "Item inserido com sucesso!");
           setTimeout(() => {
@@ -127,8 +125,6 @@ const Institutions = () => {
   const handleDeleteInstitutions = async (id) => {
     try {
       const response = await deleteInstituicao(id);
-
-      console.log(response);
 
       if (response.Message === "All documents deleted!") {
         Toast("success", "Item excluído com sucesso!");

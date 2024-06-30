@@ -186,6 +186,18 @@ export const getConexaoBySeqUsu = async (id) => {
   }
 };
 
+export const getConexaoIncluindoBySeqUsu = async (id) => {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BASE_PATH}/usuario/conexao/incluindo/SEQ_USU/${id}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const getFinanciamentoBySeqPro = async (id) => {
   try {
     const response = await fetch(
