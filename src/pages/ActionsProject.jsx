@@ -90,13 +90,13 @@ const ActionsProject = () => {
       selectedData.dth_inicio_pro === null
         ? null
         : new Date(
-            new Date(selectedData.dth_inicio_pro).toISOString().slice(0, -1)
+            new Date(selectedData.dth_inicio_pro).toISOString()
           ),
     dth_final_pro:
       selectedData.dth_final_pro === null
         ? null
         : new Date(
-            new Date(selectedData.dth_final_pro).toISOString().slice(0, -1)
+            new Date(selectedData.dth_final_pro).toISOString()
           ),
     flg_status_pro: selectedData.flg_status_pro,
     seq_usu_responsavel: selectedData.seq_usu_responsavel,
